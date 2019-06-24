@@ -74,6 +74,21 @@ namespace SellerCloud.Net.Http
             }
         }
 
+        public async Task<Result> Result()
+        {
+            try
+            {
+                HttpResponseMessage response = await this.Response();
+                Result result = await response.GetResultAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return ex.AsResult();
+            }
+        }
+
         public async Task<Result<FileAttachment>> FileAttachment()
         {
             try
