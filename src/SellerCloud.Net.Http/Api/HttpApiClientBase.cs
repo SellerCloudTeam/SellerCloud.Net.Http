@@ -59,5 +59,12 @@ namespace SellerCloud.Net.Http.Api
 
             return new HttpRequestBuilder(this.client, endpoint, HttpMethod.Delete, body);
         }
+
+        protected HttpRequestBuilder HttpPatch(string baseUri, string route)
+        {
+            string endpoint = baseUri + route;
+
+            return new HttpRequestBuilder(this.client, endpoint, new HttpMethod("PATCH"));
+        }
     }
 }
