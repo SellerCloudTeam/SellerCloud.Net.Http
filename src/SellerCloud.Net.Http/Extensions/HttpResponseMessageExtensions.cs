@@ -92,6 +92,7 @@ namespace SellerCloud.Net.Http.Extensions
             switch (status)
             {
                 case HttpStatusCode.OK:
+                case HttpStatusCode.NoContent:
                 case HttpStatusCode.Continue:
 
                 case HttpStatusCode.Found:
