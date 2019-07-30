@@ -21,7 +21,7 @@ namespace SellerCloud.Net.Http.Extensions
                 error = TryDeserialize<GenericErrorResponse>(body);
             }
 
-            string errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage;
+            string errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message;
 
             if (!IsSuccessStatus(response.StatusCode, out string message))
             {
@@ -39,7 +39,7 @@ namespace SellerCloud.Net.Http.Extensions
 
             GenericErrorResponse error = TryDeserialize<GenericErrorResponse>(body);
 
-            string errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage;
+            string errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message;
             string errorSource = error?.ErrorSource ?? error?.StackTrace;
 
             if (!IsSuccessStatus(response.StatusCode, out string message))
@@ -73,7 +73,7 @@ namespace SellerCloud.Net.Http.Extensions
                 contentType = response.Content.Headers?.ContentType?.MediaType;
             }
 
-            string errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage;
+            string errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message;
 
             if (!IsSuccessStatus(response.StatusCode, out string message))
             {

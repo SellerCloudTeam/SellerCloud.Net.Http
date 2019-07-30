@@ -4,6 +4,7 @@
     {
         public string ErrorMessage { get; set; }
         public string ExceptionMessage { get; set; }
+        public string Message { get; set; }
 
         public string ErrorSource { get; set; }
         public string StackTrace { get; set; }
