@@ -21,7 +21,7 @@ namespace SellerCloud.Net.Http.Extensions
                 return false;
             }
 
-            if (exception.Response.ContentType == ApplicationJson)
+            if (exception.Response.ContentType == ApplicationJson || exception.Response.ContentType?.StartsWith(ApplicationJson) == true)
             {
                 message = ExtractErrorFromJsonBody(exception.Response as HttpWebResponse, body);
 
