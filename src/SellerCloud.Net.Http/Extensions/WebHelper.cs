@@ -32,8 +32,9 @@ namespace SellerCloud.Net.Http.Api
             request.Method = method.Method;
             request.ContentType = ApplicationJson;
 
-            string dataJson = SerializeAsJson(data);
-            byte[] dataBytes = Encoding.UTF8.GetBytes(dataJson);
+            byte[] dataBytes = data is byte[] bytes
+                ? bytes
+                : JsonBytes(data);
 
             using (Stream stream = request.GetRequestStream())
             {
@@ -42,10 +43,18 @@ namespace SellerCloud.Net.Http.Api
 
             if (token != null)
             {
-                request.Headers[HttpRequestHeader.Authorization] = $"{token.Scheme} {token.Parameter}";
+                request.Headers[HttpRequestHeader.Authorization] = $"{token.Scheme} {token.Parameter}".Trim();
             }
 
             return request;
+        }
+
+        private static byte[] JsonBytes<T>(T data)
+        {
+            string dataJson = SerializeAsJson(data);
+            byte[] dataBytes = Encoding.UTF8.GetBytes(dataJson);
+
+            return dataBytes;
         }
 
         private static string SerializeAsJson<T>(T data)

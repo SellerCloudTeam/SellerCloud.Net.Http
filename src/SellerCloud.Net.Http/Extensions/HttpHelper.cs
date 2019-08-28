@@ -33,7 +33,9 @@ namespace SellerCloud.Net.Http.Extensions
             {
                 RequestUri = new Uri(endpoint),
                 Method = method,
-                Content = ConstructJsonContent(data)
+                Content = data is byte[] bytes
+                    ? ConstructByteArrayContent(bytes)
+                    : ConstructJsonContent(data)
             };
 
             if (token != null)
@@ -47,6 +49,11 @@ namespace SellerCloud.Net.Http.Extensions
         public static HttpContent ConstructJsonContent(object data)
         {
             return new StringContent(SerializeAsJson(data), Encoding.UTF8, ApplicationJson);
+        }
+
+        public static HttpContent ConstructByteArrayContent(byte[] data)
+        {
+            return new ByteArrayContent(data);
         }
 
         private static string SerializeAsJson<T>(T data)
