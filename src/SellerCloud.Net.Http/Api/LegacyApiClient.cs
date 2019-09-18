@@ -33,6 +33,13 @@ namespace SellerCloud.Net.Http.Api
             return new WebRequestBuilder(endpoint, HttpMethod.Post, body);
         }
 
+        public WebRequestBuilder HttpPut(string route)
+        {
+            string endpoint = this.baseUri + route;
+
+            return new WebRequestBuilder(endpoint, HttpMethod.Put);
+        }
+
         public WebRequestBuilder HttpPut<TBody>(string route, TBody body)
         {
             string endpoint = this.baseUri + route;
