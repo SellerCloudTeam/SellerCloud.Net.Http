@@ -10,18 +10,15 @@ namespace SellerCloud.Net.Http.Extensions
     {
         public static async Task<Result> GetResultAsync(this HttpResponseMessage response)
         {
-            GenericErrorResponse error = null;
+            string body = response.Content == null
+                ? null
+                : await response.Content.ReadAsStringAsync();
 
-            if (response.Content != null)
-            {
-                string body = await response.Content.ReadAsStringAsync();
-
-                error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
-            }
+            GenericErrorResponse error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
 
             string errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message;
 
-            if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, out string message))
+            if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string message))
             {
                 return ResultFactory.Error(errorMessage ?? message);
             }
@@ -40,7 +37,7 @@ namespace SellerCloud.Net.Http.Extensions
             string errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message;
             string errorSource = error?.ErrorSource ?? error?.StackTrace;
 
-            if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, out string message))
+            if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string message))
             {
                 return ResultFactory.Error<T>(errorMessage ?? message, errorSource);
             }
@@ -59,10 +56,11 @@ namespace SellerCloud.Net.Http.Extensions
             byte[] content = null;
 
             GenericErrorResponse error = null;
+            string body = null;
 
             if (response.Content != null)
             {
-                string body = await response.Content.ReadAsStringAsync();
+                body = await response.Content.ReadAsStringAsync();
 
                 error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
                 content = await response.Content.ReadAsByteArrayAsync();
@@ -73,7 +71,7 @@ namespace SellerCloud.Net.Http.Extensions
 
             string errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message;
 
-            if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, out string message))
+            if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string message))
             {
                 return ResultFactory.Error<FileAttachment>(errorMessage ?? message);
             }

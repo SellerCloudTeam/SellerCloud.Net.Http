@@ -10,8 +10,12 @@ namespace SellerCloud.Net.Http.Extensions
 
             return message;
         }
-
         public static bool IsSuccessStatus(HttpStatusCode status, out string message)
+        {
+            return IsSuccessStatus(status, responseContent: null, message: out message);
+        }
+
+        public static bool IsSuccessStatus(HttpStatusCode status, string responseContent, out string message)
         {
             message = null;
 
@@ -27,36 +31,36 @@ namespace SellerCloud.Net.Http.Extensions
 
                 case HttpStatusCode.Created:
                     return true;
-
-                case HttpStatusCode.BadRequest:
-                    message = "Bad request";
-
-                    return false;
-
-                case HttpStatusCode.Unauthorized:
-                    message = "Unauthorized";
-
-                    return false;
-
-                case HttpStatusCode.NotFound:
-                    message = "Requested content not found";
-
-                    return false;
-
-                case HttpStatusCode.NotAcceptable:
-                    message = "Request could not be processed"; // TODO: Better error message?
-
-                    return false;
-
-                case HttpStatusCode.InternalServerError:
-                    message = "An internal server error has occurred";
-
-                    return false;
             }
 
-            message = $"Unexpected HTTP response status {status}!";
+            string defaultMessage = $"Unexpected HTTP response status {GetDefaultErrorMessage(status)}!";
+
+            message = responseContent ?? defaultMessage;
 
             return false;
+        }
+
+        private static string GetDefaultErrorMessage(HttpStatusCode status)
+        {
+            switch (status)
+            {
+                case HttpStatusCode.BadRequest:
+                    return "Bad request";
+
+                case HttpStatusCode.Unauthorized:
+                    return "Unauthorized";
+
+                case HttpStatusCode.NotFound:
+                    return "Requested content not found";
+
+                case HttpStatusCode.NotAcceptable:
+                    return "Request could not be processed"; // TODO: Better error message?
+
+                case HttpStatusCode.InternalServerError:
+                    return "An internal server error has occurred";
+            }
+
+            return null;
         }
     }
 }
