@@ -47,16 +47,16 @@ namespace SellerCloud.Net.Http.Extensions
             switch (status)
             {
                 case HttpStatusCode.BadRequest:
-                    return "Bad request";
+                    return $"{nameof(HttpStatusCode.BadRequest)}";
 
                 case HttpStatusCode.Unauthorized:
-                    return "Unauthorized";
+                    return $"{nameof(HttpStatusCode.Unauthorized)}";
 
                 case HttpStatusCode.NotFound:
-                    return "Requested content not found";
+                    return $"The requested content {nameof(HttpStatusCode.NotFound)}";
 
                 case HttpStatusCode.NotAcceptable:
-                    return "Request could not be processed"; // TODO: Better error message?
+                    return "The request could not be processed"; // TODO: Better error message?
 
                 case HttpStatusCode.InternalServerError:
                     return "An internal server error has occurred";
