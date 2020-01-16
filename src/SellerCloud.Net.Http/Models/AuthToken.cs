@@ -14,7 +14,14 @@
         }
 
         public string Scheme { get; }
-        public string Parameter { get; }
+        public string? Parameter { get; }
+
+        public override string ToString()
+        {
+            return this.Parameter == null
+                ? $"{this.Scheme}"
+                : $"{this.Scheme} {this.Parameter}";
+        }
 
         public static class Schemes
         {
