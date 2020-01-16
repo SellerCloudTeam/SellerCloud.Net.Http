@@ -13,5 +13,9 @@
         WebRequestBuilder HttpPut<TBody>(string route, TBody body);
 
         WebRequestBuilder HttpDelete(string route);
+
+        WebRequestBuilder HttpDelete<TBody>(string route, TBody body);
+
+        WebRequestBuilder HttpPatch<TBody>(string route, TBody body);
     }
 }

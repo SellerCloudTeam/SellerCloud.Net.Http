@@ -11,7 +11,7 @@ namespace SellerCloud.Net.Http.Extensions
         {
             HttpMethod method = HttpMethod.Get;
             HttpRequestMessage request = HttpHelper.ConstructHttpRequestMessage(endpoint, method, token);
-            HttpResponseMessage response = await client.SendAsync(request);
+            HttpResponseMessage response = await client.SendAsync(request, cancellationToken);
 
             return response;
         }
@@ -20,7 +20,7 @@ namespace SellerCloud.Net.Http.Extensions
         {
             HttpMethod method = HttpMethod.Post;
             HttpRequestMessage request = HttpHelper.ConstructHttpRequestMessageWithContent(endpoint, method, data, token: null);
-            HttpResponseMessage response = await client.SendAsync(request);
+            HttpResponseMessage response = await client.SendAsync(request, cancellationToken);
 
             return response;
         }
@@ -29,7 +29,7 @@ namespace SellerCloud.Net.Http.Extensions
         {
             HttpMethod method = HttpMethod.Post;
             HttpRequestMessage request = HttpHelper.ConstructHttpRequestMessageWithContent(endpoint, method, data, token);
-            HttpResponseMessage response = await client.SendAsync(request);
+            HttpResponseMessage response = await client.SendAsync(request, cancellationToken);
 
             return response;
         }
