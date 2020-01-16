@@ -15,11 +15,11 @@ namespace SellerCloud.Net.Http
         private readonly HttpMethod method;
 
         private readonly string endpoint;
-        private readonly object body;
+        private readonly object? body;
 
-        private Action<HttpWebRequest> configureRequest;
+        private Action<HttpWebRequest>? configureRequest;
 
-        private AuthToken authToken;
+        private AuthToken? authToken;
         private TimeSpan? timeout;
 
         private readonly IEnumerable<HttpMethod> HttpMethodsThatNeedBody = new[] { HttpMethod.Post, HttpMethod.Put };

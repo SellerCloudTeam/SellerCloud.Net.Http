@@ -11,7 +11,7 @@ namespace SellerCloud.Net.Http.Extensions
     {
         private const string ApplicationJson = "application/json";
 
-        public static HttpRequestMessage ConstructHttpRequestMessage(string endpoint, HttpMethod method, AuthToken token)
+        public static HttpRequestMessage ConstructHttpRequestMessage(string endpoint, HttpMethod method, AuthToken? token)
         {
             HttpRequestMessage request = new HttpRequestMessage
             {
