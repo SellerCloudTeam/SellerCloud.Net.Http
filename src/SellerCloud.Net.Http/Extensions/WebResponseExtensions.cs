@@ -45,7 +45,7 @@ namespace SellerCloud.Net.Http.Extensions
 
             if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, out string? message))
             {
-                return ResultFactory.Error(errorMessage ?? message);
+                return ResultFactory.Error(errorMessage ?? message ?? Constants.UnknownError);
             }
 
             return ResultFactory.Success();
@@ -65,7 +65,7 @@ namespace SellerCloud.Net.Http.Extensions
 
             if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, out string? message))
             {
-                return ResultFactory.Error<T>(errorMessage ?? message, errorSource);
+                return ResultFactory.Error<T>(errorMessage ?? message ?? Constants.UnknownError, errorSource);
             }
 
             T data = JsonHelper.Deserialize<T>(body);

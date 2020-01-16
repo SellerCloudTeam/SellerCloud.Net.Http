@@ -8,9 +8,6 @@ namespace SellerCloud.Net.Http.Extensions
 {
     public static class HttpResponseMessageExtensions
     {
-        private const string NoContentError = "No content";
-        private const string ApplicationBinary = "application/octet-stream";
-
         public static async Task<Result> GetResultAsync(this HttpResponseMessage response)
         {
             string? body = response.Content == null
@@ -23,7 +20,7 @@ namespace SellerCloud.Net.Http.Extensions
 
             if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string? message))
             {
-                return ResultFactory.Error(errorMessage ?? message);
+                return ResultFactory.Error(errorMessage ?? message ?? Constants.UnknownError);
             }
 
             return ResultFactory.Success();
@@ -42,7 +39,7 @@ namespace SellerCloud.Net.Http.Extensions
 
             if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string? message))
             {
-                return ResultFactory.Error<T>(errorMessage ?? message, errorSource);
+                return ResultFactory.Error<T>(errorMessage ?? message ?? Constants.UnknownError, errorSource);
             }
 
             T data = JsonHelper.Deserialize<T>(body);
@@ -76,15 +73,15 @@ namespace SellerCloud.Net.Http.Extensions
 
             if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string? message))
             {
-                return ResultFactory.Error<FileAttachment>(errorMessage ?? message);
+                return ResultFactory.Error<FileAttachment>(errorMessage ?? message ?? Constants.UnknownError);
             }
 
             if (content == null)
             {
-                return ResultFactory.Error<FileAttachment>(NoContentError);
+                return ResultFactory.Error<FileAttachment>(Constants.NoContentError);
             }
 
-            FileAttachment file = new FileAttachment(name ?? UntitledFileName, content, contentType ?? ApplicationBinary);
+            FileAttachment file = new FileAttachment(name ?? UntitledFileName, content, contentType ?? Constants.ApplicationBinary);
 
             return ResultFactory.Success(file);
         }

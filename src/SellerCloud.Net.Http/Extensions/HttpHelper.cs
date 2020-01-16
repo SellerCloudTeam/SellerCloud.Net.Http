@@ -9,8 +9,6 @@ namespace SellerCloud.Net.Http.Extensions
 {
     public static class HttpHelper
     {
-        private const string ApplicationJson = "application/json";
-
         public static HttpRequestMessage ConstructHttpRequestMessage(string endpoint, HttpMethod method, AuthToken? token)
         {
             HttpRequestMessage request = new HttpRequestMessage
@@ -48,7 +46,7 @@ namespace SellerCloud.Net.Http.Extensions
 
         public static HttpContent ConstructJsonContent(object? data)
         {
-            return new StringContent(SerializeAsJson(data), Encoding.UTF8, ApplicationJson);
+            return new StringContent(SerializeAsJson(data), Encoding.UTF8, Constants.ApplicationJson);
         }
 
         public static HttpContent ConstructByteArrayContent(byte[] data)

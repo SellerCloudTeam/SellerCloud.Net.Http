@@ -5,9 +5,6 @@ namespace SellerCloud.Net.Http.Extensions
 {
     public static class WebExceptionExtensions
     {
-        private const string UnknownError = "Unknown error";
-        private const string ApplicationJson = "application/json";
-
         public static bool TryExtractErrorFromBody(this WebException exception, out string? message)
         {
             message = null;
@@ -22,7 +19,7 @@ namespace SellerCloud.Net.Http.Extensions
                 return false;
             }
 
-            if (exception.Response.ContentType == ApplicationJson || exception.Response.ContentType?.StartsWith(ApplicationJson) == true)
+            if (exception.Response.ContentType == Constants.ApplicationJson || exception.Response.ContentType?.StartsWith(Constants.ApplicationJson) == true)
             {
                 message = ExtractErrorFromJsonBody(exception.Response as HttpWebResponse, body);
 
@@ -51,7 +48,7 @@ namespace SellerCloud.Net.Http.Extensions
                 ? null
                 : StatusCodeHelper.GetStatusMessage(response.StatusCode);
 
-            return errorMessage ?? statusMessage ?? UnknownError;
+            return errorMessage ?? statusMessage ?? Constants.UnknownError;
         }
     }
 }

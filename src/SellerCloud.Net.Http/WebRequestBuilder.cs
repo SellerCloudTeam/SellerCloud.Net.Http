@@ -77,7 +77,7 @@ namespace SellerCloud.Net.Http
             {
                 if (wex.TryExtractErrorFromBody(out string? message))
                 {
-                    return ResultFactory.Error<T>(message);
+                    return ResultFactory.Error<T>(message ?? Constants.UnknownError);
                 }
                 else
                 {
@@ -103,7 +103,7 @@ namespace SellerCloud.Net.Http
             {
                 if (wex.TryExtractErrorFromBody(out string? message))
                 {
-                    return ResultFactory.Error(message);
+                    return ResultFactory.Error(message ?? Constants.UnknownError);
                 }
                 else
                 {
