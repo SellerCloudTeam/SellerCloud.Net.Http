@@ -8,17 +8,20 @@ namespace SellerCloud.Net.Http.Extensions
 {
     public static class HttpResponseMessageExtensions
     {
+        private const string NoContentError = "No content";
+        private const string ApplicationBinary = "application/octet-stream";
+
         public static async Task<Result> GetResultAsync(this HttpResponseMessage response)
         {
-            string body = response.Content == null
+            string? body = response.Content == null
                 ? null
                 : await response.Content.ReadAsStringAsync();
 
-            GenericErrorResponse error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
+            GenericErrorResponse? error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
 
-            string errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message;
+            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message;
 
-            if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string message))
+            if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string? message))
             {
                 return ResultFactory.Error(errorMessage ?? message);
             }
@@ -28,16 +31,16 @@ namespace SellerCloud.Net.Http.Extensions
 
         public static async Task<Result<T>> GetResultAsync<T>(this HttpResponseMessage response)
         {
-            string body = response.Content == null
+            string? body = response.Content == null
                 ? null
                 : await response.Content.ReadAsStringAsync();
 
-            GenericErrorResponse error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
+            GenericErrorResponse? error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
 
-            string errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message;
-            string errorSource = error?.ErrorSource ?? error?.StackTrace;
+            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message;
+            string? errorSource = error?.ErrorSource ?? error?.StackTrace;
 
-            if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string message))
+            if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string? message))
             {
                 return ResultFactory.Error<T>(errorMessage ?? message, errorSource);
             }
@@ -51,12 +54,12 @@ namespace SellerCloud.Net.Http.Extensions
         {
             const string UntitledFileName = "Untitled.dat";
 
-            string name = null;
-            string contentType = null;
-            byte[] content = null;
+            string? name = null;
+            string? contentType = null;
+            byte[]? content = null;
 
-            GenericErrorResponse error = null;
-            string body = null;
+            GenericErrorResponse? error = null;
+            string? body = null;
 
             if (response.Content != null)
             {
@@ -69,14 +72,19 @@ namespace SellerCloud.Net.Http.Extensions
                 contentType = response.Content.Headers?.ContentType?.MediaType;
             }
 
-            string errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message;
+            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message;
 
-            if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string message))
+            if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string? message))
             {
                 return ResultFactory.Error<FileAttachment>(errorMessage ?? message);
             }
 
-            FileAttachment file = new FileAttachment(name ?? UntitledFileName, content, contentType);
+            if (content == null)
+            {
+                return ResultFactory.Error<FileAttachment>(NoContentError);
+            }
+
+            FileAttachment file = new FileAttachment(name ?? UntitledFileName, content, contentType ?? ApplicationBinary);
 
             return ResultFactory.Success(file);
         }

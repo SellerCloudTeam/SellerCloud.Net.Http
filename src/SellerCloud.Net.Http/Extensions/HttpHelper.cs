@@ -27,7 +27,7 @@ namespace SellerCloud.Net.Http.Extensions
             return request;
         }
 
-        public static HttpRequestMessage ConstructHttpRequestMessageWithContent<T>(string endpoint, HttpMethod method, T data, AuthToken token)
+        public static HttpRequestMessage ConstructHttpRequestMessageWithContent<T>(string endpoint, HttpMethod method, T data, AuthToken? token)
         {
             HttpRequestMessage request = new HttpRequestMessage
             {
@@ -46,7 +46,7 @@ namespace SellerCloud.Net.Http.Extensions
             return request;
         }
 
-        public static HttpContent ConstructJsonContent(object data)
+        public static HttpContent ConstructJsonContent(object? data)
         {
             return new StringContent(SerializeAsJson(data), Encoding.UTF8, ApplicationJson);
         }

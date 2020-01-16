@@ -75,7 +75,7 @@ namespace SellerCloud.Net.Http
             }
             catch (WebException wex)
             {
-                if (wex.TryExtractErrorFromBody(out string message))
+                if (wex.TryExtractErrorFromBody(out string? message))
                 {
                     return ResultFactory.Error<T>(message);
                 }
@@ -101,7 +101,7 @@ namespace SellerCloud.Net.Http
             }
             catch (WebException wex)
             {
-                if (wex.TryExtractErrorFromBody(out string message))
+                if (wex.TryExtractErrorFromBody(out string? message))
                 {
                     return ResultFactory.Error(message);
                 }

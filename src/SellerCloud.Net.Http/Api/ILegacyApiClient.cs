@@ -6,16 +6,20 @@
 
         WebRequestBuilder HttpPost(string route);
 
-        WebRequestBuilder HttpPost<TBody>(string route, TBody body);
+        WebRequestBuilder HttpPost<TBody>(string route, TBody body)
+            where TBody : notnull;
 
         WebRequestBuilder HttpPut(string route);
 
-        WebRequestBuilder HttpPut<TBody>(string route, TBody body);
+        WebRequestBuilder HttpPut<TBody>(string route, TBody body)
+            where TBody : notnull;
 
         WebRequestBuilder HttpDelete(string route);
 
-        WebRequestBuilder HttpDelete<TBody>(string route, TBody body);
+        WebRequestBuilder HttpDelete<TBody>(string route, TBody body)
+            where TBody : notnull;
 
-        WebRequestBuilder HttpPatch<TBody>(string route, TBody body);
+        WebRequestBuilder HttpPatch<TBody>(string route, TBody body)
+            where TBody : notnull;
     }
 }

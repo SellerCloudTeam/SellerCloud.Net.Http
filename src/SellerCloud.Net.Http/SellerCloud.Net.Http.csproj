@@ -6,6 +6,12 @@
     <Authors>SellerCloud</Authors>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <WarningsAsErrors>CS8600;CS8602;CS8603;CS8620;CS8613;CS8629;CS8625;CS8619;CS8614;CS8604;CS8601;CS8714;CS8653;CS8634;CS8621;CS8645;CS8606</WarningsAsErrors>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="SellerCloud.Results" Version="1.0.0.6" />

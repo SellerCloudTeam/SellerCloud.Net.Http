@@ -21,6 +21,7 @@ namespace SellerCloud.Net.Http.Api
         }
 
         protected WebRequestBuilder HttpPost<TBody>(string baseUri, string route, TBody body)
+            where TBody : notnull
         {
             string endpoint = baseUri.WithRoute(route);
 
@@ -35,6 +36,7 @@ namespace SellerCloud.Net.Http.Api
         }
 
         protected WebRequestBuilder HttpPut<TBody>(string baseUri, string route, TBody body)
+            where TBody : notnull
         {
             string endpoint = baseUri.WithRoute(route);
 
@@ -49,6 +51,7 @@ namespace SellerCloud.Net.Http.Api
         }
 
         protected WebRequestBuilder HttpDelete<TBody>(string baseUri, string route, TBody body)
+            where TBody : notnull
         {
             string endpoint = baseUri.WithRoute(route);
 
@@ -56,6 +59,7 @@ namespace SellerCloud.Net.Http.Api
         }
 
         protected WebRequestBuilder HttpPatch<TBody>(string baseUri, string route, TBody body)
+            where TBody : notnull
         {
             string endpoint = baseUri.WithRoute(route);
 

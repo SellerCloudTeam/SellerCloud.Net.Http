@@ -4,14 +4,15 @@ namespace SellerCloud.Net.Http.Extensions
 {
     public static class JsonHelper
     {
-        private static bool IsJsonString(string input) => input.TrimStart()?.StartsWith(@"""") ?? false;
-        private static bool IsJsonObject(string input) => input.TrimStart()?.StartsWith("{") ?? false;
+        private static bool IsJsonString(string? input) => input?.TrimStart()?.StartsWith(@"""") ?? false;
+        private static bool IsJsonObject(string? input) => input?.TrimStart()?.StartsWith("{") ?? false;
 
-        public static T Deserialize<T>(string input) => JsonConvert.DeserializeObject<T>(input);
+        public static T Deserialize<T>(string? input) => JsonConvert.DeserializeObject<T>(input);
 
-        public static T TryDeserialize<T>(string input)
+        public static T? TryDeserialize<T>(string? input)
+            where T : class
         {
-            T result;
+            T? result;
 
             bool isStringExpected = typeof(T) == typeof(string);
             bool isStringProvided = IsJsonString(input);
@@ -19,11 +20,11 @@ namespace SellerCloud.Net.Http.Extensions
             // Special cases to avoid exception throwing
             if (isStringExpected && !isStringProvided)
             {
-                result = default(T);
+                result = default;
             }
             else if (isStringProvided && !isStringExpected)
             {
-                result = default(T);
+                result = default;
             }
             else
             {
@@ -33,11 +34,11 @@ namespace SellerCloud.Net.Http.Extensions
                 }
                 catch (JsonReaderException)
                 {
-                    result = default(T);
+                    result = default;
                 }
                 catch (JsonSerializationException)
                 {
-                    result = default(T);
+                    result = default;
                 }
             }
 
