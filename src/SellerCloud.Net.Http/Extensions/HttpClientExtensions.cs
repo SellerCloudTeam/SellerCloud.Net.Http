@@ -7,7 +7,7 @@ namespace SellerCloud.Net.Http.Extensions
 {
     public static class HttpClientExtensions
     {
-        public static async Task<HttpResponseMessage> GetAsync(this HttpClient client, string endpoint, AuthToken token, CancellationToken cancellationToken)
+        public static async Task<HttpResponseMessage> GetAsync(this HttpClient client, string endpoint, AuthToken token, CancellationToken cancellationToken = default)
         {
             HttpMethod method = HttpMethod.Get;
             HttpRequestMessage request = HttpHelper.ConstructHttpRequestMessage(endpoint, method, token);
@@ -16,7 +16,7 @@ namespace SellerCloud.Net.Http.Extensions
             return response;
         }
 
-        public static async Task<HttpResponseMessage> PostAsJsonAsync(this HttpClient client, string endpoint, object data, CancellationToken cancellationToken)
+        public static async Task<HttpResponseMessage> PostAsJsonAsync(this HttpClient client, string endpoint, object data, CancellationToken cancellationToken = default)
         {
             HttpMethod method = HttpMethod.Post;
             HttpRequestMessage request = HttpHelper.ConstructHttpRequestMessageWithContent(endpoint, method, data, token: null);
@@ -25,7 +25,7 @@ namespace SellerCloud.Net.Http.Extensions
             return response;
         }
 
-        public static async Task<HttpResponseMessage> PostAsJsonAsync(this HttpClient client, string endpoint, object data, AuthToken token, CancellationToken cancellationToken)
+        public static async Task<HttpResponseMessage> PostAsJsonAsync(this HttpClient client, string endpoint, object data, AuthToken token, CancellationToken cancellationToken = default)
         {
             HttpMethod method = HttpMethod.Post;
             HttpRequestMessage request = HttpHelper.ConstructHttpRequestMessageWithContent(endpoint, method, data, token);
