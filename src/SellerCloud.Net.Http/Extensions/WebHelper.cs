@@ -9,9 +9,7 @@ namespace SellerCloud.Net.Http.Api
 {
     public static class WebHelper
     {
-        private const string ApplicationJson = "application/json";
-
-        public static HttpWebRequest ConstructWebRequestMessage(string endpoint, HttpMethod method, AuthToken token)
+        public static HttpWebRequest ConstructWebRequestMessage(string endpoint, HttpMethod method, AuthToken? token)
         {
             HttpWebRequest request = WebRequest.CreateHttp(endpoint);
 
@@ -25,12 +23,12 @@ namespace SellerCloud.Net.Http.Api
             return request;
         }
 
-        public static HttpWebRequest ConstructWebRequestMessageWithContent<T>(string endpoint, HttpMethod method, T data, AuthToken token)
+        public static HttpWebRequest ConstructWebRequestMessageWithContent<T>(string endpoint, HttpMethod method, T data, AuthToken? token)
         {
             HttpWebRequest request = WebRequest.CreateHttp(endpoint);
 
             request.Method = method.Method;
-            request.ContentType = ApplicationJson;
+            request.ContentType = Constants.ApplicationJson;
 
             byte[] dataBytes = data is byte[] bytes
                 ? bytes

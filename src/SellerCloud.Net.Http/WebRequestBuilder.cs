@@ -15,11 +15,11 @@ namespace SellerCloud.Net.Http
         private readonly HttpMethod method;
 
         private readonly string endpoint;
-        private readonly object body;
+        private readonly object? body;
 
-        private Action<HttpWebRequest> configureRequest;
+        private Action<HttpWebRequest>? configureRequest;
 
-        private AuthToken authToken;
+        private AuthToken? authToken;
         private TimeSpan? timeout;
 
         private readonly IEnumerable<HttpMethod> HttpMethodsThatNeedBody = new[] { HttpMethod.Post, HttpMethod.Put };
@@ -75,9 +75,9 @@ namespace SellerCloud.Net.Http
             }
             catch (WebException wex)
             {
-                if (wex.TryExtractErrorFromBody(out string message))
+                if (wex.TryExtractErrorFromBody(out string? message))
                 {
-                    return ResultFactory.Error<T>(message);
+                    return ResultFactory.Error<T>(message ?? Constants.UnknownError);
                 }
                 else
                 {
@@ -101,9 +101,9 @@ namespace SellerCloud.Net.Http
             }
             catch (WebException wex)
             {
-                if (wex.TryExtractErrorFromBody(out string message))
+                if (wex.TryExtractErrorFromBody(out string? message))
                 {
-                    return ResultFactory.Error(message);
+                    return ResultFactory.Error(message ?? Constants.UnknownError);
                 }
                 else
                 {

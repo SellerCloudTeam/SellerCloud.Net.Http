@@ -5,9 +5,7 @@ namespace SellerCloud.Net.Http.Extensions
 {
     public static class WebExceptionExtensions
     {
-        private const string ApplicationJson = "application/json";
-
-        public static bool TryExtractErrorFromBody(this WebException exception, out string message)
+        public static bool TryExtractErrorFromBody(this WebException exception, out string? message)
         {
             message = null;
 
@@ -16,12 +14,12 @@ namespace SellerCloud.Net.Http.Extensions
                 return false;
             }
 
-            if (!exception.Response.TryReadBody(out string body))
+            if (!exception.Response.TryReadBody(out string? body))
             {
                 return false;
             }
 
-            if (exception.Response.ContentType == ApplicationJson || exception.Response.ContentType?.StartsWith(ApplicationJson) == true)
+            if (exception.Response.ContentType == Constants.ApplicationJson || exception.Response.ContentType?.StartsWith(Constants.ApplicationJson) == true)
             {
                 message = ExtractErrorFromJsonBody(exception.Response as HttpWebResponse, body);
 
@@ -33,7 +31,7 @@ namespace SellerCloud.Net.Http.Extensions
             }
             else
             {
-                HttpWebResponse httpWebResponse = exception.Response as HttpWebResponse;
+                HttpWebResponse? httpWebResponse = exception.Response as HttpWebResponse;
 
                 message = StatusCodeHelper.GetStatusMessage(httpWebResponse?.StatusCode ?? HttpStatusCode.NotImplemented);
             }
@@ -41,14 +39,16 @@ namespace SellerCloud.Net.Http.Extensions
             return true;
         }
 
-        private static string ExtractErrorFromJsonBody(HttpWebResponse response, string body)
+        private static string ExtractErrorFromJsonBody(HttpWebResponse? response, string? body)
         {
-            GenericErrorResponse error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
+            GenericErrorResponse? error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
 
-            string errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message;
-            string statusMessage = StatusCodeHelper.GetStatusMessage(response.StatusCode);
+            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message;
+            string? statusMessage = response == null
+                ? null
+                : StatusCodeHelper.GetStatusMessage(response.StatusCode);
 
-            return errorMessage ?? statusMessage;
+            return errorMessage ?? statusMessage ?? Constants.UnknownError;
         }
     }
 }
