@@ -19,6 +19,8 @@
         HttpRequestBuilder HttpDelete<TBody>(string route, TBody body)
             where TBody : notnull;
 
+        HttpRequestBuilder HttpPatch(string route);
+
         HttpRequestBuilder HttpPatch<TBody>(string route, TBody body)
             where TBody : notnull;
     }
