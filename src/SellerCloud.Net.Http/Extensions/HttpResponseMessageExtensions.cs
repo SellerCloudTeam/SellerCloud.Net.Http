@@ -16,7 +16,7 @@ namespace SellerCloud.Net.Http.Extensions
 
             GenericErrorResponse? error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
 
-            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message;
+            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message ?? error?.Title;
 
             if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string? message))
             {
@@ -34,8 +34,8 @@ namespace SellerCloud.Net.Http.Extensions
 
             GenericErrorResponse? error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
 
-            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message;
-            string? errorSource = error?.ErrorSource ?? error?.StackTrace;
+            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message ?? error?.Title;
+            string? errorSource = error?.ErrorSource ?? error?.StackTrace ?? error?.TraceId;
 
             if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string? message))
             {
@@ -69,7 +69,7 @@ namespace SellerCloud.Net.Http.Extensions
                 contentType = response.Content.Headers?.ContentType?.MediaType;
             }
 
-            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message;
+            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message ?? error?.Title;
 
             if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string? message))
             {

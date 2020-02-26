@@ -8,5 +8,9 @@
 
         public string? ErrorSource { get; set; }
         public string? StackTrace { get; set; }
+
+        public string? Title { get; set; }
+        public string? TraceId { get; set; }
+        
     }
 }
