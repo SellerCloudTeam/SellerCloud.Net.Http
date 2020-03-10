@@ -38,7 +38,7 @@ namespace SellerCloud.Net.Http.Extensions
 
             message = string.IsNullOrWhiteSpace(errorMessage)
                 ? responseContent
-                : $"Unexpected HTTP response status: {errorMessage}!";
+                : errorMessage;
 
             return false;
         }
