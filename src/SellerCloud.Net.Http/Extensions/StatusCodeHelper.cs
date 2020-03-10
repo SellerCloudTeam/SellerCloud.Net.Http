@@ -34,11 +34,11 @@ namespace SellerCloud.Net.Http.Extensions
                     return true;
             }
 
-            string defaultMessage = $"Unexpected HTTP response status {GetDefaultErrorMessage(status)}!";
+            var errorMessage = GetDefaultErrorMessage(status);
 
-            message = string.IsNullOrWhiteSpace(responseContent)
-                ? defaultMessage
-                : responseContent;
+            message = string.IsNullOrWhiteSpace(errorMessage)
+                ? responseContent
+                : $"Unexpected HTTP response status: {errorMessage}!";
 
             return false;
         }
