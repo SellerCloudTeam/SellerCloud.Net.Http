@@ -11,38 +11,47 @@ namespace SellerCloud.Net.Http.Extensions
     {
         public static async Task<Result> GetResultAsync(this HttpResponseMessage response)
         {
-            if (response.Content != null)
+            if (response.Content == null)
             {
-                string body = await response.Content.ReadAsStringAsync();
-                
-                GenericErrorResponse? error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
-
-                string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message ?? error?.Title;
-
-                if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string? message))
+                if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, out string? standardErrorMessage))
                 {
-                    return ResultFactory.Error(errorMessage ?? message ?? Constants.UnknownError);
+                    return ResultFactory.Error(standardErrorMessage ?? Constants.UnknownError);
                 }
+
                 return ResultFactory.Success();
             }
-            return ResultFactory.Error(Constants.UnknownError);
+
+            string body = await response.Content.ReadAsStringAsync();
+
+            GenericErrorResponse? error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
+
+            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message ?? error?.Title;
+
+            if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string? message))
+            {
+                return ResultFactory.Error(errorMessage ?? message ?? Constants.UnknownError);
+            }
+
+            return ResultFactory.Success();
         }
 
         public static async Task<Result<T>> GetResultAsync<T>(this HttpResponseMessage response)
         {
-            if (response.Content != null)
+            if (response.Content == null)
             {
-                string body = await response.Content.ReadAsStringAsync();
-                var mediaType = response.Content.Headers.ContentType.MediaType;
-                return mediaType switch
-                {
-                    "text/plain" => HandleText<T>(body),
-                    "text/html" => HandleHtml<T>(response.StatusCode, body),
-                    "application/json" => HandleJson<T>(response.StatusCode, body),
-                    _ => ResultFactory.Error<T>($"{Constants.UnknownError}, media type {mediaType}"),
-                };
+                return ResultFactory.Error<T>(Constants.UnknownError);
             }
-            return ResultFactory.Error<T>(Constants.UnknownError);
+
+            string body = await response.Content.ReadAsStringAsync();
+            string mediaType = response.Content.Headers.ContentType.MediaType;
+
+            return mediaType switch
+            {
+                Constants.TextPlain => HandleText<T>(body),
+                Constants.TextHtml => HandleHtml<T>(response.StatusCode, body),
+                Constants.ApplicationJson => HandleJson<T>(response.StatusCode, body),
+                _ => ResultFactory.Error<T>($"{Constants.UnknownError}, media type {mediaType}"),
+            };
         }
 
         public static async Task<Result<FileAttachment>> GetFileAttachmentResultAsync(this HttpResponseMessage response)
