@@ -11,20 +11,21 @@ namespace SellerCloud.Net.Http.Extensions
     {
         public static async Task<Result> GetResultAsync(this HttpResponseMessage response)
         {
-            string? body = response.Content == null
-                ? null
-                : await response.Content.ReadAsStringAsync();
-
-            GenericErrorResponse? error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
-
-            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message ?? error?.Title;
-
-            if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string? message))
+            if (response.Content != null)
             {
-                return ResultFactory.Error(errorMessage ?? message ?? Constants.UnknownError);
-            }
+                string body = await response.Content.ReadAsStringAsync();
+                
+                GenericErrorResponse? error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
 
-            return ResultFactory.Success();
+                string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message ?? error?.Title;
+
+                if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string? message))
+                {
+                    return ResultFactory.Error(errorMessage ?? message ?? Constants.UnknownError);
+                }
+                return ResultFactory.Success();
+            }
+            return ResultFactory.Error(Constants.UnknownError);
         }
 
         public static async Task<Result<T>> GetResultAsync<T>(this HttpResponseMessage response)
@@ -33,12 +34,13 @@ namespace SellerCloud.Net.Http.Extensions
             {
                 string body = await response.Content.ReadAsStringAsync();
                 var mediaType = response.Content.Headers.ContentType.MediaType;
-                switch (mediaType)
+                return mediaType switch
                 {
-                    case "text/plain": return HandleText<T>(body);
-                    case "text/html": return HandleHtml<T>(response.StatusCode, body);
-                    case "application/json": return HandleJson<T>(response.StatusCode, body);
-                }
+                    "text/plain" => HandleText<T>(body),
+                    "text/html" => HandleHtml<T>(response.StatusCode, body),
+                    "application/json" => HandleJson<T>(response.StatusCode, body),
+                    _ => ResultFactory.Error<T>($"{Constants.UnknownError}, media type {mediaType}"),
+                };
             }
             return ResultFactory.Error<T>(Constants.UnknownError);
         }
