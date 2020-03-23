@@ -28,7 +28,7 @@ namespace SellerCloud.Net.Http.Extensions
 
             GenericErrorResponse? error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
 
-            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message ?? error?.Title;
+            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message ?? error?.RfcError ?? error?.Title;
 
             if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string? message))
             {
