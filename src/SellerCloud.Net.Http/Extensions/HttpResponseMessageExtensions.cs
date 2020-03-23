@@ -29,21 +29,18 @@ namespace SellerCloud.Net.Http.Extensions
 
         public static async Task<Result<T>> GetResultAsync<T>(this HttpResponseMessage response)
         {
-            string? body = null;
-
             if (response.Content != null)
             {
-                body = await response.Content.ReadAsStringAsync();
+                string body = await response.Content.ReadAsStringAsync();
                 var mediaType = response.Content.Headers.ContentType.MediaType;
                 switch (mediaType)
                 {
                     case "text/plain": return HandleText<T>(body);
+                    case "text/html": return HandleHtml<T>(response.StatusCode, body);
                     case "application/json": return HandleJson<T>(response.StatusCode, body);
                 }
             }
-            T data = JsonHelper.Deserialize<T>(body);
-
-            return ResultFactory.Success(data);
+            return ResultFactory.Error<T>(Constants.UnknownError);
         }
 
         public static async Task<Result<FileAttachment>> GetFileAttachmentResultAsync(this HttpResponseMessage response)
@@ -87,6 +84,16 @@ namespace SellerCloud.Net.Http.Extensions
 
         private static Result<T> HandleText<T>(string body) =>
             ResultFactory.Error<T>(body ?? Constants.UnknownError);
+
+        private static Result<T> HandleHtml<T>(HttpStatusCode statusCode, string body)
+        {
+            Result<T> result = ResultFactory.Error<T>(Constants.UnknownError);
+            if (!StatusCodeHelper.IsSuccessStatus(statusCode, body, out string? message))
+            {
+                result = ResultFactory.Error<T>(message ?? body);
+            }
+            return result;
+        }
 
         private static Result<T> HandleJson<T>(HttpStatusCode statusCode, string body)
         {
