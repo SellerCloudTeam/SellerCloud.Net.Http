@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,6 +20,9 @@ namespace SellerCloud.Net.Http.ResponseModels
         public IDictionary<string, object>? Errors { get; set; }
 
         public string? RfcError => this.RfcErrors().FirstOrDefault();
+
+        [JsonProperty("error_description")]
+        public string? ErrorDescription { get; set; }
 
         public IEnumerable<string> RfcErrors()
         {

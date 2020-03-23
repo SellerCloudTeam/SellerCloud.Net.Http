@@ -28,7 +28,7 @@ namespace SellerCloud.Net.Http.Extensions
 
             GenericErrorResponse? error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
 
-            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message ?? error?.RfcError ?? error?.Title;
+            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message ?? error?.RfcError ?? error?.Title ?? error?.ErrorDescription;
 
             if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, body, out string? message))
             {
@@ -132,7 +132,7 @@ namespace SellerCloud.Net.Http.Extensions
         {
             GenericErrorResponse? error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
 
-            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message ?? error?.RfcError ?? error?.Title;
+            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message ?? error?.RfcError ?? error?.Title ?? error?.ErrorDescription;
             string? errorSource = error?.ErrorSource ?? error?.StackTrace ?? error?.TraceId;
 
             if (!StatusCodeHelper.IsSuccessStatus(statusCode, body, out string? message))
