@@ -61,6 +61,7 @@ namespace SellerCloud.Net.Http.Extensions
                 Constants.TextPlain => HandleText<T>(body),
                 Constants.TextHtml => HandleHtml<T>(response.StatusCode, body),
                 Constants.ApplicationJson => HandleJson<T>(response.StatusCode, body),
+                Constants.ApplicationProblemJson => HandleJson<T>(response.StatusCode, body),
                 _ => ResultFactory.Error<T>($"{Constants.UnknownError}, media type {mediaType}"),
             };
         }
@@ -131,7 +132,7 @@ namespace SellerCloud.Net.Http.Extensions
         {
             GenericErrorResponse? error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
 
-            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message ?? error?.Title;
+            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message ?? error?.RfcError ?? error?.Title;
             string? errorSource = error?.ErrorSource ?? error?.StackTrace ?? error?.TraceId;
 
             if (!StatusCodeHelper.IsSuccessStatus(statusCode, body, out string? message))
