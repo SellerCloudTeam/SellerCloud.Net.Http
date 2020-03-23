@@ -47,9 +47,9 @@ namespace SellerCloud.Net.Http.Extensions
         {
             return status switch
             {
-                HttpStatusCode.BadRequest => $"{nameof(HttpStatusCode.BadRequest)}",
-                HttpStatusCode.Unauthorized => $"{nameof(HttpStatusCode.Unauthorized)}",
-                HttpStatusCode.NotFound => $"The requested content {nameof(HttpStatusCode.NotFound)}",
+                HttpStatusCode.BadRequest => $"Bad request",
+                HttpStatusCode.Unauthorized => $"Unauthorized",
+                HttpStatusCode.NotFound => $"The requested content was not found",
                 HttpStatusCode.NotAcceptable => "The request could not be processed", // TODO: Better error message?
                 HttpStatusCode.InternalServerError => "An internal server error has occurred",
 
