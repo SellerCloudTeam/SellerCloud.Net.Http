@@ -3,6 +3,7 @@ using SellerCloud.Net.Http.ResponseModels;
 using SellerCloud.Results;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace SellerCloud.Net.Http.Extensions
@@ -11,7 +12,9 @@ namespace SellerCloud.Net.Http.Extensions
     {
         public static async Task<Result> GetResultAsync(this HttpResponseMessage response)
         {
-            if (response.Content == null)
+            HttpContent content = response.Content;
+
+            if (content == null)
             {
                 if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, out string? standardErrorMessage))
                 {
@@ -21,7 +24,7 @@ namespace SellerCloud.Net.Http.Extensions
                 return ResultFactory.Success();
             }
 
-            string body = await response.Content.ReadAsStringAsync();
+            string body = await content.ReadAsStringAsync();
 
             GenericErrorResponse? error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
 
@@ -37,13 +40,21 @@ namespace SellerCloud.Net.Http.Extensions
 
         public static async Task<Result<T>> GetResultAsync<T>(this HttpResponseMessage response)
         {
-            if (response.Content == null)
+            HttpContent content = response.Content;
+            MediaTypeHeaderValue? contentType = content?.Headers?.ContentType;
+
+            if (content == null)
             {
                 return ResultFactory.Error<T>(Constants.UnknownError);
             }
 
-            string body = await response.Content.ReadAsStringAsync();
-            string mediaType = response.Content.Headers.ContentType.MediaType;
+            if (contentType == null)
+            {
+                return HandleNoBody<T>(response.StatusCode);
+            }
+
+            string body = await content.ReadAsStringAsync();
+            string mediaType = contentType.MediaType;
 
             return mediaType switch
             {
@@ -95,6 +106,16 @@ namespace SellerCloud.Net.Http.Extensions
 
         private static Result<T> HandleText<T>(string body) =>
             ResultFactory.Error<T>(body ?? Constants.UnknownError);
+
+        private static Result<T> HandleNoBody<T>(HttpStatusCode statusCode)
+        {
+            Result<T> result = ResultFactory.Error<T>(Constants.UnknownError);
+            if (!StatusCodeHelper.IsSuccessStatus(statusCode, out string? message))
+            {
+                result = ResultFactory.Error<T>(message ?? Constants.UnknownError);
+            }
+            return result;
+        }
 
         private static Result<T> HandleHtml<T>(HttpStatusCode statusCode, string body)
         {
