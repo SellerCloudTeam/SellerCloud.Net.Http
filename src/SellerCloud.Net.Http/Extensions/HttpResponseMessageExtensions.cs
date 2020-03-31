@@ -13,6 +13,7 @@ namespace SellerCloud.Net.Http.Extensions
         public static async Task<HttpResult> GetHttpResultAsync(this HttpResponseMessage response)
         {
             HttpStatusCode statusCode = response.StatusCode;
+
             HttpContent content = response.Content;
 
             if (content == null)
@@ -43,6 +44,7 @@ namespace SellerCloud.Net.Http.Extensions
             where T : class
         {
             HttpStatusCode statusCode = response.StatusCode;
+
             HttpContent content = response.Content;
             MediaTypeHeaderValue? contentType = content?.Headers?.ContentType;
 
@@ -112,16 +114,20 @@ namespace SellerCloud.Net.Http.Extensions
 
         private static HttpResult<T> HandleText<T>(HttpStatusCode statusCode, string body)
             where T : class
-            => HttpResultFactory.Error<T>(statusCode, body ?? Constants.UnknownError);
+        {
+            return HttpResultFactory.Error<T>(statusCode, body ?? Constants.UnknownError);
+        }
 
         private static HttpResult<T> HandleNoBody<T>(HttpStatusCode statusCode)
             where T : class
         {
             HttpResult<T> result = HttpResultFactory.Error<T>(statusCode, Constants.UnknownError);
+
             if (!StatusCodeHelper.IsSuccessStatus(statusCode, out string? message))
             {
                 result = HttpResultFactory.Error<T>(statusCode, message ?? Constants.UnknownError);
             }
+
             return result;
         }
 
@@ -129,10 +135,12 @@ namespace SellerCloud.Net.Http.Extensions
             where T : class
         {
             HttpResult<T> result = HttpResultFactory.Error<T>(statusCode, Constants.UnknownError);
+
             if (!StatusCodeHelper.IsSuccessStatus(statusCode, body, out string? message))
             {
                 result = HttpResultFactory.Error<T>(statusCode, message ?? body);
             }
+
             return result;
         }
 
@@ -148,7 +156,9 @@ namespace SellerCloud.Net.Http.Extensions
             {
                 return HttpResultFactory.Error<T>(statusCode, errorMessage ?? message ?? Constants.UnknownError, errorSource);
             }
+
             T data = JsonHelper.Deserialize<T>(body);
+
             return HttpResultFactory.Success(statusCode, data);
         }
     }
