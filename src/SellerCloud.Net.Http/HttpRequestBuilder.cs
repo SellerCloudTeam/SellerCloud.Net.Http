@@ -60,7 +60,8 @@ namespace SellerCloud.Net.Http
             return this;
         }
 
-        public async Task<HttpResult<T>> HttpResult<T>()
+        public async Task<HttpResult<T>> Result<T>()
+            where T : class
         {
             try
             {
@@ -75,7 +76,23 @@ namespace SellerCloud.Net.Http
             }
         }
 
-        public async Task<HttpResult> HttpResult()
+        public async Task<HttpValueResult<T>> ValueResult<T>()
+            where T : struct
+        {
+            try
+            {
+                HttpResponseMessage response = await this.Response();
+                HttpValueResult<T> result = await response.GetHttpValueResultAsync<T>();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return ex.AsHttpValueResult<T>(Constants.UnknownHttpStatusCode);
+            }
+        }
+
+        public async Task<HttpResult> Result()
         {
             try
             {

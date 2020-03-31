@@ -65,7 +65,8 @@ namespace SellerCloud.Net.Http
             return this;
         }
 
-        public HttpResult<T> HttpResult<T>()
+        public HttpResult<T> Result<T>()
+            where T : class
         {
             try
             {
@@ -76,13 +77,15 @@ namespace SellerCloud.Net.Http
             }
             catch (WebException wex)
             {
+                HttpStatusCode statusCode = wex.StatusCodeOrDefault() ?? Constants.UnknownHttpStatusCode;
+
                 if (wex.TryExtractErrorFromBody(out string? message))
                 {
-                    return HttpResultFactory.Error<T>(message ?? Constants.UnknownError);
+                    return HttpResultFactory.Error<T>(statusCode, message ?? Constants.UnknownError);
                 }
                 else
                 {
-                    return wex.AsHttpResult<T>();
+                    return wex.AsHttpResult<T>(statusCode);
                 }
             }
             catch (Exception ex)
@@ -91,7 +94,36 @@ namespace SellerCloud.Net.Http
             }
         }
 
-        public HttpResult HttpResult()
+        public HttpValueResult<T> ValueResult<T>()
+            where T : struct
+        {
+            try
+            {
+                HttpWebResponse response = this.Response();
+                HttpValueResult<T> result = response.GetHttpValueResult<T>();
+
+                return result;
+            }
+            catch (WebException wex)
+            {
+                HttpStatusCode statusCode = wex.StatusCodeOrDefault() ?? Constants.UnknownHttpStatusCode;
+
+                if (wex.TryExtractErrorFromBody(out string? message))
+                {
+                    return HttpValueResultFactory.Error<T>(statusCode, message ?? Constants.UnknownError);
+                }
+                else
+                {
+                    return wex.AsHttpValueResult<T>(statusCode);
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.AsHttpValueResult<T>(Constants.UnknownHttpStatusCode);
+            }
+        }
+
+        public HttpResult Result()
         {
             try
             {
@@ -102,18 +134,20 @@ namespace SellerCloud.Net.Http
             }
             catch (WebException wex)
             {
+                HttpStatusCode statusCode = wex.StatusCodeOrDefault() ?? Constants.UnknownHttpStatusCode;
+
                 if (wex.TryExtractErrorFromBody(out string? message))
                 {
-                    return HttpResultFactory.Error(message ?? Constants.UnknownError);
+                    return HttpResultFactory.Error(statusCode, message ?? Constants.UnknownError);
                 }
                 else
                 {
-                    return wex.AsHttpResult(Constants.UnknownHttpStatusCode);
+                    return wex.AsHttpResult(statusCode);
                 }
             }
             catch (Exception ex)
             {
-                return ex.AsHttpResult();
+                return ex.AsHttpResult(Constants.UnknownHttpStatusCode);
             }
         }
 

@@ -1,5 +1,4 @@
 ﻿using SellerCloud.Net.Http.ResponseModels;
-using SellerCloud.Results;
 using SellerCloud.Results.Http;
 using System.IO;
 using System.Net;
@@ -55,6 +54,7 @@ namespace SellerCloud.Net.Http.Extensions
         }
 
         public static HttpResult<T> GetHttpResult<T>(this HttpWebResponse response)
+            where T : class
         {
             HttpStatusCode statusCode = response.StatusCode;
 
@@ -76,6 +76,31 @@ namespace SellerCloud.Net.Http.Extensions
             T data = JsonHelper.Deserialize<T>(body);
 
             return HttpResultFactory.Success(statusCode, data);
+        }
+
+        public static HttpValueResult<T> GetHttpValueResult<T>(this HttpWebResponse response)
+            where T : struct
+        {
+            HttpStatusCode statusCode = response.StatusCode;
+
+            if (!response.TryReadBody(out string? body))
+            {
+                return HttpValueResultFactory.Error<T>(statusCode, "Could not read web response!");
+            }
+
+            GenericErrorResponse? error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
+
+            string? errorMessage = error?.ErrorMessage ?? error?.ExceptionMessage ?? error?.Message ?? error?.Title;
+            string? errorSource = error?.ErrorSource ?? error?.StackTrace ?? error?.TraceId;
+
+            if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, out string? message))
+            {
+                return HttpValueResultFactory.Error<T>(statusCode, errorMessage ?? message ?? Constants.UnknownError, errorSource);
+            }
+
+            T data = JsonHelper.Deserialize<T>(body);
+
+            return HttpValueResultFactory.Success(statusCode, data);
         }
     }
 }

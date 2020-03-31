@@ -1,6 +1,5 @@
 ﻿using SellerCloud.Net.Http.Models;
 using SellerCloud.Net.Http.ResponseModels;
-using SellerCloud.Results;
 using SellerCloud.Results.Http;
 using System.Net;
 using System.Net.Http;
@@ -41,6 +40,7 @@ namespace SellerCloud.Net.Http.Extensions
         }
 
         public static async Task<HttpResult<T>> GetHttpResultAsync<T>(this HttpResponseMessage response)
+            where T : class
         {
             HttpStatusCode statusCode = response.StatusCode;
             HttpContent content = response.Content;
@@ -110,10 +110,12 @@ namespace SellerCloud.Net.Http.Extensions
             return HttpResultFactory.Success(statusCode, file);
         }
 
-        private static HttpResult<T> HandleText<T>(HttpStatusCode statusCode, string body) =>
-            HttpResultFactory.Error<T>(statusCode, body ?? Constants.UnknownError);
+        private static HttpResult<T> HandleText<T>(HttpStatusCode statusCode, string body)
+            where T : class
+            => HttpResultFactory.Error<T>(statusCode, body ?? Constants.UnknownError);
 
         private static HttpResult<T> HandleNoBody<T>(HttpStatusCode statusCode)
+            where T : class
         {
             HttpResult<T> result = HttpResultFactory.Error<T>(statusCode, Constants.UnknownError);
             if (!StatusCodeHelper.IsSuccessStatus(statusCode, out string? message))
@@ -124,6 +126,7 @@ namespace SellerCloud.Net.Http.Extensions
         }
 
         private static HttpResult<T> HandleHtml<T>(HttpStatusCode statusCode, string body)
+            where T : class
         {
             HttpResult<T> result = HttpResultFactory.Error<T>(statusCode, Constants.UnknownError);
             if (!StatusCodeHelper.IsSuccessStatus(statusCode, body, out string? message))
@@ -134,6 +137,7 @@ namespace SellerCloud.Net.Http.Extensions
         }
 
         private static HttpResult<T> HandleJson<T>(HttpStatusCode statusCode, string body)
+            where T : class
         {
             GenericErrorResponse? error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
 
