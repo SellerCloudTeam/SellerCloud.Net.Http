@@ -64,12 +64,12 @@ namespace SellerCloud.Net.Http
             return this;
         }
 
-        public Result<T> Result<T>()
+        public HttpResult<T> HttpResult<T>()
         {
             try
             {
                 HttpWebResponse response = this.Response();
-                Result<T> result = response.GetResult<T>();
+                HttpResult<T> result = response.GetHttpResult<T>();
 
                 return result;
             }
@@ -81,21 +81,21 @@ namespace SellerCloud.Net.Http
                 }
                 else
                 {
-                    return wex.AsResult<T>();
+                    return wex.AsHttpResult<T>();
                 }
             }
             catch (Exception ex)
             {
-                return ex.AsResult<T>();
+                return ex.AsHttpResult<T>();
             }
         }
 
-        public Result Result()
+        public HttpResult Result()
         {
             try
             {
                 HttpWebResponse response = this.Response();
-                Result result = response.GetResult();
+                HttpResult result = response.GetHttpResult();
 
                 return result;
             }
@@ -107,28 +107,28 @@ namespace SellerCloud.Net.Http
                 }
                 else
                 {
-                    return wex.AsResult();
+                    return wex.AsHttpResult();
                 }
             }
             catch (Exception ex)
             {
-                return ex.AsResult();
+                return ex.AsHttpResult();
             }
         }
 
         // TODO
-        // public Result<FileAttachment> FileAttachment()
+        // public HttpResult<FileAttachment> FileAttachment()
         // {
         //     try
         //     {
         //         HttpWebResponse response = this.Response();
-        //         Result<FileAttachment> result = response.GetFileAttachmentResult();
+        //         HttpResult<FileAttachment> result = response.GetFileAttachmentHttpResult();
         // 
         //         return result;
         //     }
         //     catch (Exception ex)
         //     {
-        //         return ex.AsResult<FileAttachment>();
+        //         return ex.AsHttpResult<FileAttachment>();
         //     }
         // }
 

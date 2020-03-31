@@ -32,7 +32,7 @@ namespace SellerCloud.Net.Http.Extensions
             }
         }
 
-        public static Result GetResult(this HttpWebResponse response)
+        public static HttpResult GetHttpResult(this HttpWebResponse response)
         {
             GenericErrorResponse? error = null;
 
@@ -51,7 +51,7 @@ namespace SellerCloud.Net.Http.Extensions
             return ResultFactory.Success();
         }
 
-        public static Result<T> GetResult<T>(this HttpWebResponse response)
+        public static HttpResult<T> GetHttpResult<T>(this HttpWebResponse response)
         {
             if (!response.TryReadBody(out string? body))
             {

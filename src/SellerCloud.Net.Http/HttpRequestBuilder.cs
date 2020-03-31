@@ -59,48 +59,48 @@ namespace SellerCloud.Net.Http
             return this;
         }
 
-        public async Task<Result<T>> Result<T>()
+        public async Task<HttpResult<T>> HttpResult<T>()
         {
             try
             {
                 HttpResponseMessage response = await this.Response();
-                Result<T> result = await response.GetResultAsync<T>();
+                HttpResult<T> result = await response.GetHttpResultAsync<T>();
 
                 return result;
             }
             catch (Exception ex)
             {
-                return ex.AsResult<T>();
+                return ex.AsHttpResult<T>();
             }
         }
 
-        public async Task<Result> Result()
+        public async Task<HttpResult> Result()
         {
             try
             {
                 HttpResponseMessage response = await this.Response();
-                Result result = await response.GetResultAsync();
+                HttpResult result = await response.GetHttpResultAsync();
 
                 return result;
             }
             catch (Exception ex)
             {
-                return ex.AsResult();
+                return ex.AsHttpResult();
             }
         }
 
-        public async Task<Result<FileAttachment>> FileAttachment()
+        public async Task<HttpResult<FileAttachment>> FileAttachment()
         {
             try
             {
                 HttpResponseMessage response = await this.Response();
-                Result<FileAttachment> result = await response.GetFileAttachmentResultAsync();
+                HttpResult<FileAttachment> result = await response.GetFileAttachmentHttpResultAsync();
 
                 return result;
             }
             catch (Exception ex)
             {
-                return ex.AsResult<FileAttachment>();
+                return ex.AsHttpResult<FileAttachment>();
             }
         }
 

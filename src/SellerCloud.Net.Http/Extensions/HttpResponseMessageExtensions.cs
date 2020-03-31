@@ -10,7 +10,7 @@ namespace SellerCloud.Net.Http.Extensions
 {
     public static class HttpResponseMessageExtensions
     {
-        public static async Task<Result> GetResultAsync(this HttpResponseMessage response)
+        public static async Task<HttpResult> GetHttpResultAsync(this HttpResponseMessage response)
         {
             HttpContent content = response.Content;
 
@@ -38,7 +38,7 @@ namespace SellerCloud.Net.Http.Extensions
             return ResultFactory.Success();
         }
 
-        public static async Task<Result<T>> GetResultAsync<T>(this HttpResponseMessage response)
+        public static async Task<HttpResult<T>> GetHttpResultAsync<T>(this HttpResponseMessage response)
         {
             HttpContent content = response.Content;
             MediaTypeHeaderValue? contentType = content?.Headers?.ContentType;
@@ -66,7 +66,7 @@ namespace SellerCloud.Net.Http.Extensions
             };
         }
 
-        public static async Task<Result<FileAttachment>> GetFileAttachmentResultAsync(this HttpResponseMessage response)
+        public static async Task<HttpResult<FileAttachment>> GetFileAttachmentHttpResultAsync(this HttpResponseMessage response)
         {
             const string UntitledFileName = "Untitled.dat";
 
@@ -105,12 +105,12 @@ namespace SellerCloud.Net.Http.Extensions
             return ResultFactory.Success(file);
         }
 
-        private static Result<T> HandleText<T>(string body) =>
+        private static HttpResult<T> HandleText<T>(string body) =>
             ResultFactory.Error<T>(body ?? Constants.UnknownError);
 
-        private static Result<T> HandleNoBody<T>(HttpStatusCode statusCode)
+        private static HttpResult<T> HandleNoBody<T>(HttpStatusCode statusCode)
         {
-            Result<T> result = ResultFactory.Error<T>(Constants.UnknownError);
+            HttpResult<T> result = ResultFactory.Error<T>(Constants.UnknownError);
             if (!StatusCodeHelper.IsSuccessStatus(statusCode, out string? message))
             {
                 result = ResultFactory.Error<T>(message ?? Constants.UnknownError);
@@ -118,9 +118,9 @@ namespace SellerCloud.Net.Http.Extensions
             return result;
         }
 
-        private static Result<T> HandleHtml<T>(HttpStatusCode statusCode, string body)
+        private static HttpResult<T> HandleHtml<T>(HttpStatusCode statusCode, string body)
         {
-            Result<T> result = ResultFactory.Error<T>(Constants.UnknownError);
+            HttpResult<T> result = ResultFactory.Error<T>(Constants.UnknownError);
             if (!StatusCodeHelper.IsSuccessStatus(statusCode, body, out string? message))
             {
                 result = ResultFactory.Error<T>(message ?? body);
@@ -128,7 +128,7 @@ namespace SellerCloud.Net.Http.Extensions
             return result;
         }
 
-        private static Result<T> HandleJson<T>(HttpStatusCode statusCode, string body)
+        private static HttpResult<T> HandleJson<T>(HttpStatusCode statusCode, string body)
         {
             GenericErrorResponse? error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
 
