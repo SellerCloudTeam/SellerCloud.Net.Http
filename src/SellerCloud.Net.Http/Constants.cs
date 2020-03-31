@@ -1,7 +1,11 @@
-﻿namespace SellerCloud.Net.Http
+﻿using System.Net;
+
+namespace SellerCloud.Net.Http
 {
     public static class Constants
     {
+        public const HttpStatusCode UnknownHttpStatusCode = default;
+
         public const string UnknownError = "Unknown error";
         public const string NoContentError = "No content";
 

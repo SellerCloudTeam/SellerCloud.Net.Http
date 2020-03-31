@@ -2,6 +2,7 @@
 using SellerCloud.Net.Http.Extensions;
 using SellerCloud.Net.Http.Models;
 using SellerCloud.Results;
+using SellerCloud.Results.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,7 +78,7 @@ namespace SellerCloud.Net.Http
             {
                 if (wex.TryExtractErrorFromBody(out string? message))
                 {
-                    return ResultFactory.Error<T>(message ?? Constants.UnknownError);
+                    return HttpResultFactory.Error<T>(message ?? Constants.UnknownError);
                 }
                 else
                 {
@@ -86,11 +87,11 @@ namespace SellerCloud.Net.Http
             }
             catch (Exception ex)
             {
-                return ex.AsHttpResult<T>();
+                return ex.AsHttpResult<T>(Constants.UnknownHttpStatusCode);
             }
         }
 
-        public HttpResult Result()
+        public HttpResult HttpResult()
         {
             try
             {
@@ -103,11 +104,11 @@ namespace SellerCloud.Net.Http
             {
                 if (wex.TryExtractErrorFromBody(out string? message))
                 {
-                    return ResultFactory.Error(message ?? Constants.UnknownError);
+                    return HttpResultFactory.Error(message ?? Constants.UnknownError);
                 }
                 else
                 {
-                    return wex.AsHttpResult();
+                    return wex.AsHttpResult(Constants.UnknownHttpStatusCode);
                 }
             }
             catch (Exception ex)

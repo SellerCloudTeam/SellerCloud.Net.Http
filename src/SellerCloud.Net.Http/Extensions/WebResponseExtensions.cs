@@ -1,5 +1,6 @@
 ﻿using SellerCloud.Net.Http.ResponseModels;
 using SellerCloud.Results;
+using SellerCloud.Results.Http;
 using System.IO;
 using System.Net;
 
@@ -34,6 +35,8 @@ namespace SellerCloud.Net.Http.Extensions
 
         public static HttpResult GetHttpResult(this HttpWebResponse response)
         {
+            HttpStatusCode statusCode = response.StatusCode;
+
             GenericErrorResponse? error = null;
 
             if (response.TryReadBody(out string? body))
@@ -45,17 +48,19 @@ namespace SellerCloud.Net.Http.Extensions
 
             if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, out string? message))
             {
-                return ResultFactory.Error(errorMessage ?? message ?? Constants.UnknownError);
+                return HttpResultFactory.Error(statusCode, errorMessage ?? message ?? Constants.UnknownError);
             }
 
-            return ResultFactory.Success();
+            return HttpResultFactory.Success(statusCode);
         }
 
         public static HttpResult<T> GetHttpResult<T>(this HttpWebResponse response)
         {
+            HttpStatusCode statusCode = response.StatusCode;
+
             if (!response.TryReadBody(out string? body))
             {
-                return ResultFactory.Error<T>("Could not read web response!");
+                return HttpResultFactory.Error<T>(statusCode, "Could not read web response!");
             }
 
             GenericErrorResponse? error = JsonHelper.TryDeserialize<GenericErrorResponse>(body);
@@ -65,12 +70,12 @@ namespace SellerCloud.Net.Http.Extensions
 
             if (!StatusCodeHelper.IsSuccessStatus(response.StatusCode, out string? message))
             {
-                return ResultFactory.Error<T>(errorMessage ?? message ?? Constants.UnknownError, errorSource);
+                return HttpResultFactory.Error<T>(statusCode, errorMessage ?? message ?? Constants.UnknownError, errorSource);
             }
 
             T data = JsonHelper.Deserialize<T>(body);
 
-            return ResultFactory.Success(data);
+            return HttpResultFactory.Success(statusCode, data);
         }
     }
 }

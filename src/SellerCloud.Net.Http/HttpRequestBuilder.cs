@@ -1,6 +1,7 @@
 ﻿using SellerCloud.Net.Http.Extensions;
 using SellerCloud.Net.Http.Models;
 using SellerCloud.Results;
+using SellerCloud.Results.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,11 +71,11 @@ namespace SellerCloud.Net.Http
             }
             catch (Exception ex)
             {
-                return ex.AsHttpResult<T>();
+                return ex.AsHttpResult<T>(Constants.UnknownHttpStatusCode);
             }
         }
 
-        public async Task<HttpResult> Result()
+        public async Task<HttpResult> HttpResult()
         {
             try
             {
@@ -85,7 +86,7 @@ namespace SellerCloud.Net.Http
             }
             catch (Exception ex)
             {
-                return ex.AsHttpResult();
+                return ex.AsHttpResult(Constants.UnknownHttpStatusCode);
             }
         }
 
@@ -100,7 +101,7 @@ namespace SellerCloud.Net.Http
             }
             catch (Exception ex)
             {
-                return ex.AsHttpResult<FileAttachment>();
+                return ex.AsHttpResult<FileAttachment>(Constants.UnknownHttpStatusCode);
             }
         }
 
