@@ -2,6 +2,7 @@
 using SellerCloud.Net.Http.Extensions;
 using SellerCloud.Net.Http.Models;
 using SellerCloud.Results;
+using SellerCloud.Results.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,71 +65,105 @@ namespace SellerCloud.Net.Http
             return this;
         }
 
-        public Result<T> Result<T>()
+        public HttpResult<T> Result<T>()
+            where T : class
         {
             try
             {
                 HttpWebResponse response = this.Response();
-                Result<T> result = response.GetResult<T>();
+                HttpResult<T> result = response.GetHttpResult<T>();
 
                 return result;
             }
             catch (WebException wex)
             {
+                HttpStatusCode statusCode = wex.StatusCodeOrDefault() ?? Constants.UnknownHttpStatusCode;
+
                 if (wex.TryExtractErrorFromBody(out string? message))
                 {
-                    return ResultFactory.Error<T>(message ?? Constants.UnknownError);
+                    return HttpResultFactory.Error<T>(statusCode, message ?? Constants.UnknownError);
                 }
                 else
                 {
-                    return wex.AsResult<T>();
+                    return wex.AsHttpResult<T>(statusCode);
                 }
             }
             catch (Exception ex)
             {
-                return ex.AsResult<T>();
+                return ex.AsHttpResult<T>(Constants.UnknownHttpStatusCode);
             }
         }
 
-        public Result Result()
+        public HttpValueResult<T> ValueResult<T>()
+            where T : struct
         {
             try
             {
                 HttpWebResponse response = this.Response();
-                Result result = response.GetResult();
+                HttpValueResult<T> result = response.GetHttpValueResult<T>();
 
                 return result;
             }
             catch (WebException wex)
             {
+                HttpStatusCode statusCode = wex.StatusCodeOrDefault() ?? Constants.UnknownHttpStatusCode;
+
                 if (wex.TryExtractErrorFromBody(out string? message))
                 {
-                    return ResultFactory.Error(message ?? Constants.UnknownError);
+                    return HttpValueResultFactory.Error<T>(statusCode, message ?? Constants.UnknownError);
                 }
                 else
                 {
-                    return wex.AsResult();
+                    return wex.AsHttpValueResult<T>(statusCode);
                 }
             }
             catch (Exception ex)
             {
-                return ex.AsResult();
+                return ex.AsHttpValueResult<T>(Constants.UnknownHttpStatusCode);
+            }
+        }
+
+        public HttpResult Result()
+        {
+            try
+            {
+                HttpWebResponse response = this.Response();
+                HttpResult result = response.GetHttpResult();
+
+                return result;
+            }
+            catch (WebException wex)
+            {
+                HttpStatusCode statusCode = wex.StatusCodeOrDefault() ?? Constants.UnknownHttpStatusCode;
+
+                if (wex.TryExtractErrorFromBody(out string? message))
+                {
+                    return HttpResultFactory.Error(statusCode, message ?? Constants.UnknownError);
+                }
+                else
+                {
+                    return wex.AsHttpResult(statusCode);
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.AsHttpResult(Constants.UnknownHttpStatusCode);
             }
         }
 
         // TODO
-        // public Result<FileAttachment> FileAttachment()
+        // public HttpResult<FileAttachment> FileAttachment()
         // {
         //     try
         //     {
         //         HttpWebResponse response = this.Response();
-        //         Result<FileAttachment> result = response.GetFileAttachmentResult();
+        //         HttpResult<FileAttachment> result = response.GetFileAttachmentHttpResult();
         // 
         //         return result;
         //     }
         //     catch (Exception ex)
         //     {
-        //         return ex.AsResult<FileAttachment>();
+        //         return ex.AsHttpResult<FileAttachment>();
         //     }
         // }
 

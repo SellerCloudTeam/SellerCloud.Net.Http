@@ -1,6 +1,7 @@
 ﻿using SellerCloud.Net.Http.Extensions;
 using SellerCloud.Net.Http.Models;
 using SellerCloud.Results;
+using SellerCloud.Results.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,48 +60,65 @@ namespace SellerCloud.Net.Http
             return this;
         }
 
-        public async Task<Result<T>> Result<T>()
+        public async Task<HttpResult<T>> Result<T>()
+            where T : class
         {
             try
             {
                 HttpResponseMessage response = await this.Response();
-                Result<T> result = await response.GetResultAsync<T>();
+                HttpResult<T> result = await response.GetHttpResultAsync<T>();
 
                 return result;
             }
             catch (Exception ex)
             {
-                return ex.AsResult<T>();
+                return ex.AsHttpResult<T>(Constants.UnknownHttpStatusCode);
             }
         }
 
-        public async Task<Result> Result()
+        public async Task<HttpValueResult<T>> ValueResult<T>()
+            where T : struct
         {
             try
             {
                 HttpResponseMessage response = await this.Response();
-                Result result = await response.GetResultAsync();
+                HttpValueResult<T> result = await response.GetHttpValueResultAsync<T>();
 
                 return result;
             }
             catch (Exception ex)
             {
-                return ex.AsResult();
+                return ex.AsHttpValueResult<T>(Constants.UnknownHttpStatusCode);
             }
         }
 
-        public async Task<Result<FileAttachment>> FileAttachment()
+        public async Task<HttpResult> Result()
         {
             try
             {
                 HttpResponseMessage response = await this.Response();
-                Result<FileAttachment> result = await response.GetFileAttachmentResultAsync();
+                HttpResult result = await response.GetHttpResultAsync();
 
                 return result;
             }
             catch (Exception ex)
             {
-                return ex.AsResult<FileAttachment>();
+                return ex.AsHttpResult(Constants.UnknownHttpStatusCode);
+            }
+        }
+
+        public async Task<HttpResult<FileAttachment>> FileAttachment()
+        {
+            try
+            {
+                HttpResponseMessage response = await this.Response();
+                HttpResult<FileAttachment> result = await response.GetFileAttachmentHttpResultAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return ex.AsHttpResult<FileAttachment>(Constants.UnknownHttpStatusCode);
             }
         }
 

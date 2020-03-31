@@ -5,6 +5,16 @@ namespace SellerCloud.Net.Http.Extensions
 {
     public static class WebExceptionExtensions
     {
+        public static HttpStatusCode? StatusCodeOrDefault(this WebException exception)
+        {
+            if (exception.Response is HttpWebResponse httpResponse)
+            {
+                return httpResponse.StatusCode;
+            }
+
+            return default;
+        }
+
         public static bool TryExtractErrorFromBody(this WebException exception, out string? message)
         {
             message = null;

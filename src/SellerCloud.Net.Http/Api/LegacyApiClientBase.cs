@@ -1,5 +1,4 @@
 ﻿using SellerCloud.Net.Http.Extensions;
-using System.Net;
 using System.Net.Http;
 
 namespace SellerCloud.Net.Http.Api
