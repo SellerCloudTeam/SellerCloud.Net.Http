@@ -179,7 +179,7 @@ namespace SellerCloud.Net.Http
 
             if (this.timeout != null)
             {
-                request.Timeout = this.timeout.Value.Milliseconds;
+                request.Timeout = (int)this.timeout.Value.TotalMilliseconds;
             }
 
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
